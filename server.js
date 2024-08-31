@@ -29,6 +29,7 @@ server.use(express.urlencoded({ extended: true }))
 
 
 
+
 //endpoints
 server.use(indexRouter)
 server.use(errorHandler)

@@ -7,6 +7,7 @@ import CustomStrategy from "passport-custom";
 import { verifyToken } from "../utils/jwt.js";
 import {sendEmail} from "../utils/nodemailer.js"
 
+
 passport.use(
   "register",
   new LocalStrategy(
