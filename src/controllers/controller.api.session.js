@@ -1,3 +1,4 @@
+import { readByEmailService, updateService } from "../service/users.service.js";
 
 async function register(req, res, next) {
   try {
@@ -32,4 +33,25 @@ async function logout(req, res, next) {
   }
 }
 
-export {login,logout,register,data}
+async function verify(req, res, next) {
+  try {
+   const {email, verifyCode} = req.params
+   const one = await readByEmailService(email)
+   if (!one) {
+    return res.error404()
+   }
+   const correct = one.verifyCode === verifyCode
+   if (!correct) {
+    return res.error400("Invalid Credentials")
+   } else {
+    await updateService(one._id, {
+      verify: true
+    })
+    return res.message200(`The account ${one.email} is ready to be used!`)
+   }
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export {login,logout,register,data, verify}
