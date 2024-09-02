@@ -32,7 +32,7 @@ class SessionRouter extends CustomRouter {
       data
     );
     this.create("/logout", ["USER", "ADMIN"], logout);
-    this.create("/verify/:email/:verifyCode", ["PUBLIC"], verify);
+    this.update("/verify/:email/:verifyCode", ["PUBLIC"], verify);
     this.read(
       "/google",
       ["PUBLIC"],
