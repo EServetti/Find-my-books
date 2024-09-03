@@ -12,10 +12,13 @@ async function getBooksFromChatGPT(description) {
   1. Si la entrada parece una cita específica, identifica el título del libro correspondiente y devuélvelo.
   2. Si la entrada es una descripción general, sugiere una lista de títulos de libros que se ajusten a esta descripción.
   
+  La entrada puede estar en inglés o en español. Por favor, realiza la tarea en el idioma en que está escrita la entrada.
+  
   Solo devuelve los títulos de los libros, separados por nuevas líneas. No incluyas ningún texto adicional o explicación.
   
   Descripción o cita: ${description}
   `;
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -35,13 +38,5 @@ async function getBooksFromChatGPT(description) {
     throw error;
   }
 }
-
-// async function getBooksFromChatGPT(description) {
-//   return [
-//     "1984 de George Orwell",
-//     "Brave New World de Aldous Huxley",
-//     "Fahrenheit 451 de Ray Bradbury"
-//   ];
-// }
 
 export default getBooksFromChatGPT;

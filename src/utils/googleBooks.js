@@ -16,7 +16,8 @@ async function getBookDetails(title) {
             publisher: book.volumeInfo.publisher || 'Unknown',
             publishedDate: book.volumeInfo.publishedDate || 'Unknown',
             description: book.volumeInfo.description || 'No description available',
-            infoLink: book.volumeInfo.infoLink || 'No link available'
+            infoLink: book.volumeInfo.infoLink || 'No link available',
+            coverImage: book.volumeInfo.imageLinks?.thumbnail || 'No cover image available'
         }));
     } catch (error) {
         console.error('Error fetching book details:', error);
