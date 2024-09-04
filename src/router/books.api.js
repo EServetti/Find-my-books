@@ -4,7 +4,7 @@ import CustomRouter from "./customRouter.js";
 class BooksRouter extends CustomRouter {
     init() {
         this.create("/", ["PUBLIC"], getBooks)
-        this.create("/:title", ["PUBLIC"], getOneBook)
+        this.create("/:isbn", ["PUBLIC"], getOneBook)
     }
 }
 
