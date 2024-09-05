@@ -31,5 +31,6 @@ export const booksValidate = Joi.object({
   isbn: Joi.number().required().messages({
     'any.required': "please enter the isbn",
   }),
+  read: Joi.boolean()
 });
 

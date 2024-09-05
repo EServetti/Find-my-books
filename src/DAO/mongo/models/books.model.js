@@ -18,6 +18,7 @@ const schema = new Schema(
     infoLink: { type: String, required: true },
     coverImage: { type: String, required: true },
     isbn: { type: String, required: true },
+    read: { type: Boolean, default: false}
   },
   {
     timestamps: true,

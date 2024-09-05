@@ -11,6 +11,7 @@ async function getBooksFromChatGPT(description) {
   La entrada proporcionada puede ser una cita específica de un libro o una descripción general de un libro. Por favor, realiza las siguientes tareas:
   1. Si la entrada parece una cita específica, identifica el título del libro correspondiente y devuélvelo.
   2. Si la entrada es una descripción general, sugiere una lista de títulos de libros que se ajusten a esta descripción.
+  3. Intenta no solo centrarte en las palabras clave sino en la descripción completa.
   
   La entrada puede estar en inglés o en español. Por favor, realiza la tarea en el idioma en que está escrita la entrada.
   

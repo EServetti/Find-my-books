@@ -9,6 +9,7 @@ import {
 import passport from "../middlewares/passport.js";
 import validator from "../middlewares/joi.validator.js";
 import { usersValidate } from "../schemas/users.validator.js";
+import extraUserInfo from "../middlewares/extraUserInfo.js";
 
 class SessionRouter extends CustomRouter {
   init() {
@@ -29,6 +30,7 @@ class SessionRouter extends CustomRouter {
       "/data",
       ["USER", "ADMIN"],
       passport.authenticate("data", { session: false }),
+      extraUserInfo,
       data
     );
     this.create("/logout", ["USER", "ADMIN"], logout);
