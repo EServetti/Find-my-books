@@ -28,8 +28,8 @@ export const booksValidate = Joi.object({
   coverImage: Joi.string().required().messages({
     'any.required': "please enter the coverImage",
   }),
-  isbn: Joi.number().required().messages({
-    'any.required': "please enter the isbn",
+  isbn: Joi.string().required().messages({
+    'any.required': "this book can't be added because it doesn't have a isbn",
   }),
   read: Joi.boolean()
 });

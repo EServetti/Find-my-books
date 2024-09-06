@@ -8,6 +8,7 @@ async function extraUserInfo(req, res, next) {
     let readBooks = all.filter((b) => b.read === true)
     readBooks = readBooks.length
     req.body.booksQuantity = booksQuantity;
+    req.body.books = all
     req.body.readBooks = readBooks;
     return next();
   } catch (error) {

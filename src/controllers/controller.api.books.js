@@ -63,6 +63,7 @@ async function getOneBook(req, res, next) {
           "No ISBN available"
         : "No ISBN available";
 
+
       return res.json({
         statusCode: 200,
         message: {
@@ -76,10 +77,7 @@ async function getOneBook(req, res, next) {
           coverImage: book.volumeInfo.imageLinks
             ? book.volumeInfo.imageLinks.thumbnail
             : "No image available",
-          bigCoverImage: book.volumeInfo.imageLinks.large
-            ? book.volumeInfo.imageLinks.large
-            : "No image available",
-          isbn: isbn,
+          isbn: isbn
         },
         relatedBooks: relatedBooks,
       });
