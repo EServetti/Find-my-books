@@ -40,4 +40,34 @@ async function getBooksFromChatGPT(description) {
   }
 }
 
+export async function getRelatedBooksFromChatGPT(title) {
+  const prompt = `
+  La entrada proporcionada es un título de un libro, necesito que completes esta tarea:
+  Devolver una lista de libros relacionados con el del titulo pero que no sea el mismo libro ingresado
+  
+  Solo devuelve los títulos de los libros, separados por nuevas líneas. No incluyas ningún texto adicional o explicación.
+  
+  Título: ${title}
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "Eres un experto en libros." },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 150,
+      temperature: 0.7,
+    });
+    const suggestions = response.choices[0].message.content.trim();
+    const book = suggestions.split("\n").filter((s) => s);
+
+    return book;
+  } catch (error) {
+    console.error("Error al obtener libros de ChatGPT:", error);
+    throw error;
+  }
+}
+
 export default getBooksFromChatGPT;

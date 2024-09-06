@@ -1,6 +1,8 @@
 import { createService } from "../service/books.service.js";
 import { getBookDetails } from "../utils/googleBooks.js";
-import getBooksFromChatGPT from "../utils/openAI.js";
+import getBooksFromChatGPT, {
+  getRelatedBooksFromChatGPT,
+} from "../utils/openAI.js";
 import axios from "axios";
 
 async function getBooks(req, res, next) {
@@ -40,6 +42,17 @@ async function getOneBook(req, res, next) {
     const books = response.data.items || [];
     if (books.length > 0) {
       const book = books[0];
+      //Agregar libros relacionados
+      const titleRelatedBooks = await getRelatedBooksFromChatGPT(
+        book.volumeInfo.title
+      );
+      let relatedBooks = titleRelatedBooks.map((title) =>
+        getBookDetails(title)
+      );
+      relatedBooks = await Promise.all(relatedBooks);
+      relatedBooks = relatedBooks.flat();
+      relatedBooks = relatedBooks.slice(0, 3);
+
       const isbn = book.volumeInfo.industryIdentifiers
         ? book.volumeInfo.industryIdentifiers.find(
             (id) => id.type === "ISBN_13"
@@ -50,17 +63,25 @@ async function getOneBook(req, res, next) {
           "No ISBN available"
         : "No ISBN available";
 
-      return res.message200({
-        title: book.volumeInfo.title,
-        authors: book.volumeInfo.authors || ["Unknown"],
-        publisher: book.volumeInfo.publisher || "Unknown",
-        publishedDate: book.volumeInfo.publishedDate || "Unknown",
-        description: book.volumeInfo.description || "No description available",
-        infoLink: book.volumeInfo.infoLink || "No link available",
-        coverImage: book.volumeInfo.imageLinks
-          ? book.volumeInfo.imageLinks.thumbnail
-          : "No image available",
-        isbn: isbn,
+      return res.json({
+        statusCode: 200,
+        message: {
+          title: book.volumeInfo.title,
+          authors: book.volumeInfo.authors || ["Unknown"],
+          publisher: book.volumeInfo.publisher || "Unknown",
+          publishedDate: book.volumeInfo.publishedDate || "Unknown",
+          description:
+            book.volumeInfo.description || "No description available",
+          infoLink: book.volumeInfo.infoLink || "No link available",
+          coverImage: book.volumeInfo.imageLinks
+            ? book.volumeInfo.imageLinks.thumbnail
+            : "No image available",
+          bigCoverImage: book.volumeInfo.imageLinks.large
+            ? book.volumeInfo.imageLinks.large
+            : "No image available",
+          isbn: isbn,
+        },
+        relatedBooks: relatedBooks,
       });
     } else {
       return res.error404();

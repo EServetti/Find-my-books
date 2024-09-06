@@ -22,6 +22,7 @@ async function getBookDetails(title) {
       infoLink: book.volumeInfo.infoLink || "No link available",
       coverImage:
         book.volumeInfo.imageLinks?.thumbnail || "No cover image available",
+      bigCoverImage: book.volumeInfo.imageLinks?.large || "No cover image available",
       isbn: book.volumeInfo.industryIdentifiers
         ? book.volumeInfo.industryIdentifiers.find(
             (id) => id.type === "ISBN_13"
