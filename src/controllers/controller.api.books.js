@@ -1,4 +1,4 @@
-import { createService } from "../service/books.service.js";
+import { createService, destroyService, updateService } from "../service/books.service.js";
 import { getBookDetails } from "../utils/googleBooks.js";
 import getBooksFromChatGPT, {
   getRelatedBooksFromChatGPT,
@@ -98,4 +98,32 @@ async function create(req, res, next) {
     return next(error);
   }
 }
-export { getBooks, getOneBook, create };
+
+async function destroy(req, res, next) {
+  try {
+    const {id} = req.params
+    const one = await destroyService(id)
+    if(!one) {
+      return res.error404()
+    } 
+    return res.message200("The book has been deleted")
+  } catch (error) {
+    return next(error)
+  }
+}
+
+async function update(req, res, next) {
+  try {
+    const {id} = req.params
+    const data = req.body
+    const one = await updateService(id, data)
+    if(!one) {
+      return res.error404()
+    } 
+    return res.message200("The book has been updated")
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export { getBooks, getOneBook, create, destroy, update };
