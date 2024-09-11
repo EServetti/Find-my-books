@@ -35,6 +35,18 @@ class Manager {
       throw error;
     }
   }
+  async readFriends(user) {
+    try {
+      const arrayOfFriends = []
+      for(const friend of user.friends) {
+        const one = await this.readOne(friend)
+        arrayOfFriends.push(one)
+      }
+      return arrayOfFriends
+    } catch (error) {
+      throw error
+    }
+  }
   async aggregate(obj) {
     try {
       const result = await this.Model.aggregate(obj)
