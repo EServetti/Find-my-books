@@ -4,6 +4,7 @@ import getBooksFromChatGPT, {
   getRelatedBooksFromChatGPT,
 } from "../utils/openAI.js";
 import axios from "axios";
+import limitBooksVersion from "../utils/limitBooks.js"
 
 async function getBooks(req, res, next) {
   try {
@@ -14,7 +15,8 @@ async function getBooks(req, res, next) {
     );
 
     const books = await Promise.all(bookDetailsPromises);
-    const flattenedBooks = books.flat();
+    let flattenedBooks = books.flat();
+    flattenedBooks = limitBooksVersion(flattenedBooks);
 
     if (flattenedBooks.length === 0) {
       return res.error404();
