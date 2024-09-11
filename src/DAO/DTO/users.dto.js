@@ -6,7 +6,7 @@ class UserDTO {
     constructor(data) {
         this.email = data.email;
         this.password = createHash(data.password);
-        this.photo = data.photo || "./src/assets/user.png";
+        this.photo = data.photo || "/img/user.png";
         this.name = data.name;
         this.role = data.role || "user";
         this.verify = data.verify || false;
