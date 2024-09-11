@@ -108,7 +108,7 @@ passport.use(
         const exists = await readByEmailService(profile.id);
         if (!exists) {
           const one = {
-            email: profile.id,
+            email: profile.email,
             name: profile.name.givenName,
             photo: profile.picture,
             password: profile.id,
@@ -116,7 +116,7 @@ passport.use(
           };
           await createService(one);
         }
-        const two = await readByEmailService(profile.id);
+        const two = await readByEmailService(profile.email);
         const data = {
           email: two.email,
           name: two.name,

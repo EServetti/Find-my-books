@@ -9,18 +9,18 @@ import {
 //metodo read
 async function read(req, res, next) {
   try {
-    const { role } = req.query;
+    const { email } = req.query;
     const all = await readService();
     if (all.length === 0) {
       return res.error404();
     }
-    const allRole = all.filter((user) => user.role == role);
+    const allEmail = all.filter((user) => user.email == email);
     //si existen usuarios con la category ingresada los devuelve
-    if (allRole.length !== 0) {
-      return res.message200(allRole);
+    if (allEmail.length !== 0) {
+      return res.message200(allEmail);
     }
     //sino se ingreso una query devuelve todos los usuarios
-    else if (!role) {
+    else if (!email) {
       return res.message200(all);
     }
     //si no existe la query ingresada devuelve un error
