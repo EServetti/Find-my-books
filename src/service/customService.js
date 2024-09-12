@@ -38,7 +38,14 @@ class CustomService {
       throw error
     }
   }
-
+  readFriedRequestService = async (userId, receiverId) => {
+    try {
+      const request = await this.manager.readFriendRequest(userId, receiverId)
+      return request
+    } catch (error) {
+      throw error
+    }
+  }
   createService = async (data) => {
     try {
       if(data.email) {

@@ -18,7 +18,6 @@ class Manager {
       throw error;
     }
   }
-
   async readOne(id) {
     try {
       const one = await this.Model.findOne({ _id: id }).lean();
@@ -43,6 +42,17 @@ class Manager {
         arrayOfFriends.push(one)
       }
       return arrayOfFriends
+    } catch (error) {
+      throw error
+    }
+  }
+  async readFriendRequest(userId, receiverId) {
+    try {
+      const request = await this.Model.findOne({
+        sender: userId,
+        receiver: receiverId
+      })
+      return request
     } catch (error) {
       throw error
     }
