@@ -105,7 +105,7 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const exists = await readByEmailService(profile.id);
+        const exists = await readByEmailService(profile.email);
         if (!exists) {
           const one = {
             email: profile.email,
