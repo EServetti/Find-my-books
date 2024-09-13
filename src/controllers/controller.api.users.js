@@ -4,7 +4,9 @@ import {
   createService,
   updateService,
   destroyService,
+  readFriendsService,
 } from "../service/users.service.js";
+import { readService as readBookService } from "../service/books.service.js";
 
 //metodo read
 async function read(req, res, next) {
@@ -56,8 +58,8 @@ async function update(req, res, next) {
       return res.error400("You must enter nid!");
     }
     const updated = await updateService(nid, data);
-    if(!updated){
-      return res.error404()
+    if (!updated) {
+      return res.error404();
     }
     return res.message200(updated);
   } catch (error) {
@@ -72,8 +74,8 @@ async function destroy(req, res, next) {
       return res.error400("You must enter nid!");
     }
     const eliminated = await destroyService(nid);
-    if(!eliminated){
-      return res.error404()
+    if (!eliminated) {
+      return res.error404();
     }
     return res.message200(`The user ${eliminated.name} has been deleted`);
   } catch (error) {
@@ -81,4 +83,26 @@ async function destroy(req, res, next) {
   }
 }
 
-export { read, readOne, update, destroy };
+async function friends(req, res, next) {
+  try {
+    const { user } = req;
+    const arrayOfFriends = await readFriendsService(user);
+    if (arrayOfFriends.length === 0) {
+      return res.error404();
+    }
+    for (const friend of arrayOfFriends) {
+      const booksInList = await readBookService({ user_id: friend._id });
+      const booksQuant = booksInList.length;
+      let readBooks = booksInList.filter((b) => b.read === true);
+      readBooks = readBooks.length;
+      friend.booksInList = booksInList;
+      friend.readBooks = readBooks;
+      friend.booksQuant = booksQuant;
+    }
+    return res.message200(arrayOfFriends);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export { read, readOne, update, destroy, friends };
