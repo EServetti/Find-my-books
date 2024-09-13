@@ -5,6 +5,7 @@ import getBooksFromChatGPT, {
 } from "../utils/openAI.js";
 import axios from "axios";
 import limitBooksVersion from "../utils/limitBooks.js"
+import { readOneService as readOneFriendService } from "../service/users.service.js";
 
 async function getBooks(req, res, next) {
   try {
@@ -128,4 +129,21 @@ async function update(req, res, next) {
   }
 }
 
-export { getBooks, getOneBook, create, destroy, update };
+async function shared(req, res, next) {
+  try {
+    const {user} = req
+    const {id} = req.params
+
+    const friend = await readOneFriendService(id)
+    const {sharedBooks} = friend
+    const sharedWithUser = sharedBooks.filter((b) => b.sharedWith === user._id)
+    if(sharedWithUser.length === 0) {
+      return res.error404()
+    }
+    return res.message200(sharedWithUser)
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export { getBooks, getOneBook, create, destroy, update, shared };
