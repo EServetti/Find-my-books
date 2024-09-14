@@ -1,5 +1,5 @@
 import { read, readOne, update, destroy, friends } from "../controllers/controller.api.users.js";
-import sendFriendRequest from "../controllers/friendRequests.js";
+import sendFriendRequest from "../controllers/controller.api.friend.js";
 import validator from "../middlewares/joi.validator.js"
 import { updateUsersValidate } from "../schemas/users.validator.js";
 import CustomRouter from "./customRouter.js";

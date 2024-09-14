@@ -8,12 +8,7 @@ const schema = new Schema ({
   email: {type: String, required: true, unique: true, index: true},
   password:{type: String, required: true},
   role: {type: String, default: "user"},
-  friends: [{ type: Types.ObjectId, ref: 'User' }], 
-  sharedBooks: [{
-    isbn: String,
-    sharedWith: [{ type: Types.ObjectId, ref: 'User' }], 
-    dateShared: { type: Date, default: Date.now }
-  }],
+  friends: [{ type: Types.ObjectId, ref: 'users' }], 
   verify: {type: Boolean, default: false},
   verifyCode: {type: String, required: true},
 },
