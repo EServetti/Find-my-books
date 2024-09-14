@@ -160,11 +160,11 @@ async function share(req, res, next) {
   try {
     const {user} = req
     const {_id} = user
-    const {sharedWith, book_id } = req.body
+    const {sharedWith, book } = req.body
     const sharedBook = await createSharedBook({
       sharedBy: _id,
       sharedWith,
-      book_id
+      book
     })
     return res.message200("The book was shared")
   } catch (error) {
