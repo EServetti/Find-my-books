@@ -1,4 +1,4 @@
-import { getBooks, getOneBook, create, destroy, update, shared } from "../controllers/controller.api.books.js";
+import { getBooks, getOneBook, create, destroy, update, shared, share } from "../controllers/controller.api.books.js";
 import CustomRouter from "./customRouter.js";
 import validator from "../middlewares/joi.validator.js";
 import { booksValidate } from "../schemas/books.validator.js";
@@ -8,6 +8,7 @@ class BooksRouter extends CustomRouter {
     init() {
         this.create("/", ["PUBLIC"], getBooks)
         this.create("/add", ["USER", "ADMIN"], validator(booksValidate), bookExists, create)
+        this.create("/share", ["USER", "ADMIN"], share)
         this.create("/:isbn", ["PUBLIC"], getOneBook)
         this.update("/:id", ["USER", "ADMIN"], update)
         this.destroy("/:id", ["USER", "ADMIN"], destroy)
