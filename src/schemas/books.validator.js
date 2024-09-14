@@ -3,10 +3,6 @@ import JoiOid from "joi-oid"
 
 //Validador de creación
 export const booksValidate = Joi.object({
-  user_id: JoiOid.objectId().required().messages({
-    'any.required': "please enter the user_id",
-    'string.pattern.name': "product_id must be a ObjectId"
-  }),
   title: Joi.string().required().messages({
     'any.required': "please enter the title",
   }),

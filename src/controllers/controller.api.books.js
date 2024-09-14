@@ -94,6 +94,8 @@ async function getOneBook(req, res, next) {
 
 async function create(req, res, next) {
   try {
+    const {user} = req
+    req.body.user_id = user._id
     const data = req.body;
     const one = await createService(data);
     return res.message200(one);
