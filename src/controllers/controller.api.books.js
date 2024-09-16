@@ -152,6 +152,7 @@ async function shared(req, res, next) {
     for(const book of sharedWithFriend) {
       sharedArray.push(book)
     }
+    sharedArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return res.message200(sharedArray)
   } catch (error) {
     return next(error)

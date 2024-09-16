@@ -4,12 +4,13 @@ import validator from "../middlewares/joi.validator.js";
 import { booksValidate } from "../schemas/books.validator.js";
 import bookExists from "../middlewares/bookExists.js";
 import {sharedValidate} from "../schemas/sharedBooks.js"
+import bookShared from "../middlewares/bookShared.js";
 
 class BooksRouter extends CustomRouter {
     init() {
         this.create("/", ["PUBLIC"], getBooks)
         this.create("/add", ["USER", "ADMIN"], validator(booksValidate), bookExists, create)
-        this.create("/share", ["USER", "ADMIN"], validator(sharedValidate), share)
+        this.create("/share", ["USER", "ADMIN"], validator(sharedValidate), bookShared, share)
         this.create("/:isbn", ["PUBLIC"], getOneBook)
         this.update("/:id", ["USER", "ADMIN"], update)
         this.destroy("/:id", ["USER", "ADMIN"], destroy)
