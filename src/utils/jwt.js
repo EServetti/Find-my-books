@@ -10,5 +10,21 @@ function verifyToken(token) {
   return data
 }
 
+function updateToken(currentToken, newToken) {
+  const token = verifyToken(currentToken);
 
-export {createToken, verifyToken}
+  if (token && token.exp) {
+    // Firmar el nuevo token con la misma fecha de expiración que el token original
+    const { exp } = token;
+    newToken.exp = exp
+    const updatedToken = jwt.sign(newToken, process.env.SECRET_JWT);
+    return updatedToken;
+  } else {
+    const error = new Error("The current token doesn't have a valid exp date")
+    error.statusCode = 400
+    throw error
+  }
+}
+
+
+export {createToken, verifyToken, updateToken}

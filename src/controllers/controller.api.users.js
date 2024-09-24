@@ -7,6 +7,7 @@ import {
   readFriendsService,
 } from "../service/users.service.js";
 import { readService as readBookService } from "../service/books.service.js";
+import { updateToken, verifyToken } from "../utils/jwt.js";
 
 //metodo read
 async function read(req, res, next) {
@@ -60,6 +61,18 @@ async function update(req, res, next) {
     const updated = await updateService(nid, data);
     if (!updated) {
       return res.error404();
+    }
+
+    //si se actualizo la photo actualizar el token de la sesion
+    if (data.photo) {
+      const token = verifyToken(req.cookies.token);
+      token.photo = data.photo;
+      const timeLeft = token.exp;
+      const maxAge = timeLeft * 1000 - Date.now();
+      delete token.exp;
+      const updatedToken = updateToken(req.cookies.token, token)
+      res.clearCookie("token", { secure: true, sameSite: "None"})
+      res.cookie("token", updatedToken, { secure: true, signedCookie: true, maxAge:maxAge, sameSite: "None"})
     }
     return res.message200(updated);
   } catch (error) {

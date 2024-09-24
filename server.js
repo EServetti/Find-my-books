@@ -24,8 +24,8 @@ const corsOptions = {
 };
 server.use(cookieParser(process.env.SECRET_COOKIE))
 server.use(cors(corsOptions));
-server.use(express.json());
-server.use(express.urlencoded({ extended: true }))
+server.use(express.json({ limit: '10mb' }));
+server.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 
 
