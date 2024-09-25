@@ -7,11 +7,13 @@ import selfRequest from "../middlewares/selfRequest.js"
 import alreadyFriend from "../middlewares/alreadyFriend.js";
 import alreadySent from "../middlewares/alreadySent.js";
 import saveImage from "../middlewares/saveImage.js";
+import readNotifications from "../controllers/controller.api.notification.js";
 
 class UsersRouter extends CustomRouter {
   init() {
     this.read("/", ["PUBLIC"], read);
     this.read("/friends", ["USER", "ADMIN"], friends)
+    this.read("/notifications", ["USER", "ADMIN"], readNotifications)
     this.read("/:nid", ["ADMIN"], readOne);
     this.update("/:nid", ["USER", "ADMIN"], validator(updateUsersValidate), saveImage, update);
     this.destroy("/:nid", ["USER", "ADMIN"], destroy);
