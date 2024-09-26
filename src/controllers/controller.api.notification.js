@@ -1,4 +1,4 @@
-import { readService } from "../service/notification.service.js"
+import { readService, updateService } from "../service/notification.service.js"
 
 async function readNotifications(req, res, next) {
     try {
@@ -15,4 +15,17 @@ async function readNotifications(req, res, next) {
     }
 }
 
-export default readNotifications
+async function updateNotifications(req, res, next) {
+    try {
+        const {nid} = req.params
+        if (!nid) {
+            return res.error400("You must enter _id of the notification")
+        }
+        await updateService(nid, {read: true})
+        return res.message200("Marked as read")
+    } catch (error) {
+        return next(error)
+    }
+}
+
+export {readNotifications, updateNotifications}

@@ -22,12 +22,8 @@ const schema = new Schema(
 
 schema.pre("find", function () {
   this.populate("sender", "photo name email");
-
-  if (this.getQuery().type === "sharedBook") {
-    this.populate("sharedBook", "title author");
-  } else if (this.getQuery().type === "friendRequest") {
-    this.populate("friendRequest", "status _id");
-  }
+  this.populate("sharedBook", "title author");
+  this.populate("friendRequest", "status _id sender receiver");
 });
 
 const Notification = model(collection, schema);

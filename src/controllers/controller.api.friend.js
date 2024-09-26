@@ -1,5 +1,6 @@
-import { createService, readFriedRequestService } from '../service/friends.service.js';
+import { createService, readFriedRequestService, updateService } from '../service/friends.service.js';
 import {createService as createNotification } from "../service/notification.service.js"
+import { updateService as updateUser } from '../service/users.service.js';
 
 async function sendFriendRequest(req, res, next) {
   try {
@@ -21,4 +22,17 @@ async function sendFriendRequest(req, res, next) {
   }
 }
 
-export default sendFriendRequest
+async function answerFriendRequest(req, res, next) {
+  try {
+    const {nid} = req.params
+    const {status, sender_id, receiver_id} = req.body
+    await updateUser(sender_id, { $addToSet: { friends: receiver_id } })
+    await updateUser(receiver_id, { $addToSet: { friends: sender_id } })
+    const one = await updateService(nid, {status})
+    return res.message200(`The request was ${status}`)
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export {sendFriendRequest, answerFriendRequest}
