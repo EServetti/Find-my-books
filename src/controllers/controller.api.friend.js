@@ -26,9 +26,11 @@ async function answerFriendRequest(req, res, next) {
   try {
     const {nid} = req.params
     const {status, sender_id, receiver_id} = req.body
-    await updateUser(sender_id, { $addToSet: { friends: receiver_id } })
-    await updateUser(receiver_id, { $addToSet: { friends: sender_id } })
     const one = await updateService(nid, {status})
+    if (status === "accepted") {
+      await updateUser(sender_id, { $addToSet: { friends: receiver_id } })
+      await updateUser(receiver_id, { $addToSet: { friends: sender_id } })
+    }
     return res.message200(`The request was ${status}`)
   } catch (error) {
     return next(error);
