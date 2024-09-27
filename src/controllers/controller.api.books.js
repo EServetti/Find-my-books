@@ -6,6 +6,7 @@ import getBooksFromChatGPT, {
 import axios from "axios";
 import limitBooksVersion from "../utils/limitBooks.js"
 import {readService as readShared, createService as createSharedBook } from "../service/shared.service.js"
+import { createService as createNotification } from "../service/notification.service.js";
 
 async function getBooks(req, res, next) {
   try {
@@ -168,6 +169,9 @@ async function share(req, res, next) {
       sharedBy: _id,
       sharedWith,
       book
+    })
+    await createNotification({
+      sender: _id, receiver: sharedWith, type: "sharedBook", sharedBook: book
     })
     return res.message200("The book was shared")
   } catch (error) {

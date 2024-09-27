@@ -11,7 +11,7 @@ const schema = new Schema(
     },
     sender: { type: Types.ObjectId, ref: "users", required: true },
     receiver: { type: Types.ObjectId, ref: "users", required: true },
-    sharedBook: { type: Types.ObjectId, ref: "shared_books" },
+    sharedBook: { type: Object },
     friendRequest: { type: Types.ObjectId, ref: "friend_requests" },
     read: { type: Boolean, default: false },
   },
@@ -22,7 +22,6 @@ const schema = new Schema(
 
 schema.pre("find", function () {
   this.populate("sender", "photo name email");
-  this.populate("sharedBook", "title author");
   this.populate("friendRequest", "status _id sender receiver");
 });
 
