@@ -5,9 +5,13 @@ import {
   updateService,
   destroyService,
   readFriendsService,
+  readByEmailService,
 } from "../service/users.service.js";
 import { readService as readBookService } from "../service/books.service.js";
 import { updateToken, verifyToken } from "../utils/jwt.js";
+import { recoverEmail } from "../utils/nodeMailer-recover.js";
+import { createHash } from "../utils/hash.js";
+import crypto from "crypto";
 
 //metodo read
 async function read(req, res, next) {
@@ -70,9 +74,14 @@ async function update(req, res, next) {
       const timeLeft = token.exp;
       const maxAge = timeLeft * 1000 - Date.now();
       delete token.exp;
-      const updatedToken = updateToken(req.cookies.token, token)
-      res.clearCookie("token", { secure: true, sameSite: "None"})
-      res.cookie("token", updatedToken, { secure: true, signedCookie: true, maxAge:maxAge, sameSite: "None"})
+      const updatedToken = updateToken(req.cookies.token, token);
+      res.clearCookie("token", { secure: true, sameSite: "None" });
+      res.cookie("token", updatedToken, {
+        secure: true,
+        signedCookie: true,
+        maxAge: maxAge,
+        sameSite: "None",
+      });
     }
     return res.message200(updated);
   } catch (error) {
@@ -118,4 +127,53 @@ async function friends(req, res, next) {
   }
 }
 
-export { read, readOne, update, destroy, friends };
+async function recover(req, res, next) {
+  try {
+    const { email } = req.body;
+    const token = crypto.randomBytes(12).toString("hex");
+    const expiration = Date.now() + 3600000;
+    const one = await readByEmailService(email);
+    if (!one) {
+      return res.error400("That email does not match any account!");
+    }
+
+    const data = {
+      resetPasswordToken: token,
+      resetPasswordExpires: expiration,
+    };
+    await updateService(one._id, data);
+    const emailData = {
+      to: email,
+      token,
+    };
+    await recoverEmail(emailData);
+    return res.message200("We've sent you a recover email");
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function updatePassword(req, res, next) {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+    const newPassword = createHash(password);
+    const one = await readService({ resetPasswordToken: token });
+    if (one.length === 0) {
+      return res.error400("This token is not valid!");
+    }
+    if (one[0].resetPasswordExpires < Date.now()) {
+      return res.error400("The token has expired!");
+    }
+    const data = {
+      password: newPassword,
+      resetPasswordToken: "",
+      resetPasswordExpires: 0,
+    };
+    const updated = await updateService(one[0]._id, data);
+    return res.message200("Your password has been updated!");
+  } catch (error) {
+    return next(error);
+  }
+}
+export { read, readOne, update, destroy, friends, recover, updatePassword };

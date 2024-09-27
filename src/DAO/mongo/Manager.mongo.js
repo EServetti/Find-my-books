@@ -67,7 +67,7 @@ class Manager {
   }
   async update (id, data) {
     try {
-      const one = await this.Model.findByIdAndUpdate(id, data, {new:true}).lean();
+      const one = await this.Model.findByIdAndUpdate(id, data, {new:true, runValidators: true}).lean();
       return one
     } catch (error) {
       throw error

@@ -11,6 +11,8 @@ class UserDTO {
         this.role = data.role || "user";
         this.verify = data.verify || false;
         this.verifyCode = crypto.randomBytes(6).toString("hex");
+        this.resetPasswordToken = ""
+        this.resetPasswordExpires = 0
     }
 }
 

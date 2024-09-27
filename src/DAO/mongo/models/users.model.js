@@ -11,6 +11,8 @@ const schema = new Schema ({
   friends: [{ type: Types.ObjectId, ref: 'users' }], 
   verify: {type: Boolean, default: false},
   verifyCode: {type: String, required: true},
+  resetPasswordToken: {type: String},
+  resetPasswordExpires: {type: Number}
 },
 {
   timestamps: true
