@@ -18,8 +18,13 @@ const startCb = () => {
 server.listen(port, startCb)
 
 //middlewares
+// const corsOptions = {
+//   origin: 'http://localhost:5173',
+//   credentials: true
+// };
+
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://find-my-books.vercel.app',
   credentials: true
 };
 server.use(cookieParser(process.env.SECRET_COOKIE))
