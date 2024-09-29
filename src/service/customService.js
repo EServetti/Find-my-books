@@ -30,7 +30,22 @@ class CustomService {
       throw error
     }
   }
-
+  readFriendsService = async (user) => {
+    try {
+      const arrayOfFriends = await this.manager.readFriends(user)
+      return arrayOfFriends
+    } catch (error) {
+      throw error
+    }
+  }
+  readFriedRequestService = async (userId, receiverId) => {
+    try {
+      const request = await this.manager.readFriendRequest(userId, receiverId)
+      return request
+    } catch (error) {
+      throw error
+    }
+  }
   createService = async (data) => {
     try {
       if(data.email) {

@@ -1,6 +1,6 @@
 import { createTransport } from "nodemailer";
 
-async function sendEmail(data) {
+async function recoverEmail(data) {
   try {
     const transport = createTransport({
       host: "smtp.gmail.com",
@@ -12,18 +12,17 @@ async function sendEmail(data) {
       },
     });
     await transport.verify();
-    const verificationUrl = `http://localhost:5173/verify/${data.to}/${data.verifyCode}`
+    const resetUrl = `http://localhost:5173/password/${data.token}`;
     const htmlContent = `
-    <h1>Welcome to our store!</h1>
-      <p>You just need to verify your account to start using our web site!</p>
-      <a href="${verificationUrl}" style="padding: 10px 20px; background-color: blue; color: white; text-decoration: none; border-radius: 5px;">
+    <p>You requested a password reset. Please click on the following link to reset your password: </p>
+    <a href="${resetUrl}" style="padding: 10px 20px; background-color: blue; color: white; text-decoration: none; border-radius: 5px;">
         Do it here
-      </a>
-    `;
+    </a>
+    <p>If you didn't request this, please ignore this email.</p>`;
     await transport.sendMail({
       from: `Find your book <${process.env.GMAIL_USER}>`,
       to: data.to,
-      subject: `Verification for ${data.name}`,
+      subject: `Update password`,
       html: htmlContent,
     });
   } catch (error) {
@@ -31,4 +30,4 @@ async function sendEmail(data) {
   }
 }
 
-export { sendEmail };
+export { recoverEmail };

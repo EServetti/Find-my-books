@@ -18,7 +18,6 @@ class Manager {
       throw error;
     }
   }
-
   async readOne(id) {
     try {
       const one = await this.Model.findOne({ _id: id }).lean();
@@ -35,6 +34,29 @@ class Manager {
       throw error;
     }
   }
+  async readFriends(user) {
+    try {
+      const arrayOfFriends = []
+      for(const friend of user.friends) {
+        const one = await this.readOne(friend)
+        arrayOfFriends.push(one)
+      }
+      return arrayOfFriends
+    } catch (error) {
+      throw error
+    }
+  }
+  async readFriendRequest(userId, receiverId) {
+    try {
+      const request = await this.Model.findOne({
+        sender: userId,
+        receiver: receiverId
+      })
+      return request
+    } catch (error) {
+      throw error
+    }
+  }
   async aggregate(obj) {
     try {
       const result = await this.Model.aggregate(obj)
@@ -45,7 +67,7 @@ class Manager {
   }
   async update (id, data) {
     try {
-      const one = await this.Model.findByIdAndUpdate(id, data, {new:true}).lean();
+      const one = await this.Model.findByIdAndUpdate(id, data, {new:true, runValidators: true}).lean();
       return one
     } catch (error) {
       throw error

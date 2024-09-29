@@ -1,12 +1,14 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { createService, readByEmailService } from "../service/users.service.js";
 import { compareHash } from "../utils/hash.js";
 import { createToken } from "../utils/jwt.js";
 import CustomStrategy from "passport-custom";
 import { verifyToken } from "../utils/jwt.js";
-import {sendEmail} from "../utils/nodemailer.js"
-
+import { sendEmail } from "../utils/nodemailer.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 passport.use(
   "register",
@@ -23,8 +25,12 @@ passport.use(
           return done(error);
         } else {
           const one = await createService(req.body);
-          const data = { to: email, name: one.name, verifyCode: one.verifyCode };
-          await sendEmail(data)
+          const data = {
+            to: email,
+            name: one.name,
+            verifyCode: one.verifyCode,
+          };
+          await sendEmail(data);
           return done(null, one);
         }
       } catch (error) {
@@ -51,11 +57,9 @@ passport.use(
           error.statusCode = 400;
           return done(error);
         } else {
-          console.log(one);
-          
           delete one.password;
           const token = createToken(one);
-          req.token = token
+          req.token = token;
           return done(null, token);
         }
       }
@@ -88,6 +92,46 @@ passport.use(
       return done(error);
     }
   })
+);
+
+passport.use(
+  "Google",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/api/sessions/google/callback",
+      passReqToCallback: true,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      try {
+        const exists = await readByEmailService(profile.email);
+        if (!exists) {
+          const one = {
+            email: profile.email,
+            name: profile.name.givenName,
+            photo: profile.picture,
+            password: profile.id,
+            verify: true,
+          };
+          await createService(one);
+        }
+        const two = await readByEmailService(profile.email);
+        const data = {
+          email: two.email,
+          name: two.name,
+          role: two.role,
+          photo: two.photo,
+          _id: two._id,
+        };
+        const token = createToken(data);
+        req.token = token
+        return done(null, token);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
 );
 
 export default passport;

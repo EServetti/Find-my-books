@@ -1,5 +1,12 @@
 import Joi from "joi";
 
+const objectIdValidation = Joi.string().custom((value, helpers) => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return helpers.message('Invalid ObjectId');
+  }
+  return value;
+}, 'ObjectId Validation');
+
 
 //Validador de creación
 export const usersValidate = Joi.object({
@@ -31,6 +38,14 @@ export const usersValidate = Joi.object({
     }),
   role: Joi.string().valid('user', 'premium', 'admin'),
   verify: Joi.boolean(),
+  friends: Joi.array().items(objectIdValidation),
+  sharedBooks: Joi.array().items(
+    Joi.object({
+      isbn: Joi.string(),
+      sharedWith: Joi.array().items(objectIdValidation),
+      dateShared: Joi.date().default(Date.now)
+    })
+  )
 });
 
 //Validador de actualización

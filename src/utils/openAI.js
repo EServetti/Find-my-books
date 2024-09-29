@@ -11,11 +11,15 @@ async function getBooksFromChatGPT(description) {
   La entrada proporcionada puede ser una cita específica de un libro o una descripción general de un libro. Por favor, realiza las siguientes tareas:
   1. Si la entrada parece una cita específica, identifica el título del libro correspondiente y devuélvelo.
   2. Si la entrada es una descripción general, sugiere una lista de títulos de libros que se ajusten a esta descripción.
+  3. Intenta no solo centrarte en las palabras clave sino en la descripción completa.
+  
+  La entrada puede estar en inglés o en español. Por favor, realiza la tarea en el idioma en que está escrita la entrada.
   
   Solo devuelve los títulos de los libros, separados por nuevas líneas. No incluyas ningún texto adicional o explicación.
   
   Descripción o cita: ${description}
   `;
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -36,12 +40,34 @@ async function getBooksFromChatGPT(description) {
   }
 }
 
-// async function getBooksFromChatGPT(description) {
-//   return [
-//     "1984 de George Orwell",
-//     "Brave New World de Aldous Huxley",
-//     "Fahrenheit 451 de Ray Bradbury"
-//   ];
-// }
+export async function getRelatedBooksFromChatGPT(title) {
+  const prompt = `
+  La entrada proporcionada es un título de un libro, necesito que completes esta tarea:
+  Devolver una lista de libros relacionados con el del titulo pero que no sea el mismo libro ingresado
+  
+  Solo devuelve los títulos de los libros, separados por nuevas líneas. No incluyas ningún texto adicional o explicación.
+  
+  Título: ${title}
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "Eres un experto en libros." },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 150,
+      temperature: 0.7,
+    });
+    const suggestions = response.choices[0].message.content.trim();
+    const book = suggestions.split("\n").filter((s) => s);
+
+    return book;
+  } catch (error) {
+    console.error("Error al obtener libros de ChatGPT:", error);
+    throw error;
+  }
+}
 
 export default getBooksFromChatGPT;
