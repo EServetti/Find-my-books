@@ -53,7 +53,7 @@ class SessionRouter extends CustomRouter {
               maxAge: 3600000,
               sameSite: "None",
             })
-            .redirect("http://localhost:5173");
+            .redirect("https://find-your-books.vercel.app");
         } catch (error) {
           return next(error);
         }
