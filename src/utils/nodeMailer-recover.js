@@ -12,7 +12,7 @@ async function recoverEmail(data) {
       },
     });
     await transport.verify();
-    const resetUrl = `http://localhost:5173/password/${data.token}`;
+    const resetUrl = `https://find-your-books.vercel.app/password/${data.token}`;
     const htmlContent = `
     <p>You requested a password reset. Please click on the following link to reset your password: </p>
     <a href="${resetUrl}" style="padding: 10px 20px; background-color: blue; color: white; text-decoration: none; border-radius: 5px;">

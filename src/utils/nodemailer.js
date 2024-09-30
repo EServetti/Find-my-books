@@ -12,7 +12,7 @@ async function sendEmail(data) {
       },
     });
     await transport.verify();
-    const verificationUrl = `http://localhost:5173/verify/${data.to}/${data.verifyCode}`
+    const verificationUrl = `https://find-your-books.vercel.app/verify/${data.to}/${data.verifyCode}`
     const htmlContent = `
     <h1>Welcome to our store!</h1>
       <p>You just need to verify your account to start using our web site!</p>
