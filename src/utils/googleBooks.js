@@ -13,6 +13,19 @@ async function getBookDetails(title) {
     );
 
     const books = response.data.items || [];
+    //Evitar libros repetidos
+    let processedTitles = [];
+    const unwantedWords = [
+      "summary",
+      "analysis",
+      "guide",
+      "study",
+      "review",
+      "notes",
+      "companion",
+      "synopsis",
+      "overview",
+    ];
 
     return books
       .filter(
@@ -21,7 +34,33 @@ async function getBookDetails(title) {
           book.volumeInfo.industryIdentifiers.some(
             (id) => id.type === "ISBN_13" || id.type === "ISBN_10"
           )
-      ) // Filter out books without ISBN_13 or ISBN_10
+      )
+      .filter((book) => {         
+        const normalizedBookTitle = book.volumeInfo.title
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9\s]/g, "")
+          .split(" ") 
+          .slice(0, 3) 
+          .join(" ");
+
+        // console.log(`titles: ${processedTitles}`);
+        // console.log(`current: ${normalizedBookTitle}`);
+        const alreadyProcessed = processedTitles.find(
+          (title) => normalizedBookTitle.includes(title) || title.includes(normalizedBookTitle)
+        );
+        const containsUnwantedWords = unwantedWords.some((word) =>
+          book.volumeInfo.title.toLowerCase().includes(word)
+        );
+
+        if (!alreadyProcessed && !containsUnwantedWords) {
+          processedTitles.push(normalizedBookTitle);
+          return true;
+        }
+
+        return false
+      })
       .map((book) => {
         const isbn13 = book.volumeInfo.industryIdentifiers.find(
           (id) => id.type === "ISBN_13"
@@ -42,7 +81,7 @@ async function getBookDetails(title) {
             book.volumeInfo.imageLinks?.thumbnail || "No cover image available",
           bigCoverImage:
             book.volumeInfo.imageLinks?.large || "No cover image available",
-          isbn: isbn13 || isbn10, // Use either ISBN_13 or ISBN_10
+          isbn: isbn13 || isbn10, 
         };
       });
   } catch (error) {
