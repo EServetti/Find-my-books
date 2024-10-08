@@ -11,6 +11,7 @@ async function getBooks(req, res, next) {
   try {
     const { description } = req.body;
     let bookTitles = await getBooksFromChatGPT(description);
+
     const bookDetailsPromises = bookTitles.map((title) =>
       getBookDetails(title)
     );
@@ -94,12 +95,24 @@ async function getOneBook(req, res, next) {
 async function getRecommendedBooks(req, res, next) {
   try {
     const {_id} = req.user
-    const books =  await readService({user_id: _id})
-    if (books.length === 0) {
+    const userBooks =  await readService({user_id: _id})
+
+    if (userBooks.length === 0) {
       return res.error404()
     }
-    const recommendations = await getBookRecommendations(books)
-    return res.message200(recommendations)
+    const recommendations = await getBookRecommendations(userBooks)
+
+    const bookDetailsPromises = recommendations.map((title) =>
+      getBookDetails(title)
+    );
+
+    const books = await Promise.all(bookDetailsPromises);
+    let flattenedBooks = books.flat();
+    if (flattenedBooks.length === 0) {
+      return res.error404();
+    }
+
+    return res.message200(flattenedBooks);
   } catch (error) {
     return next(error)
   }
