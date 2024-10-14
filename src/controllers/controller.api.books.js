@@ -1,10 +1,9 @@
-import { createService, destroyService, updateService } from "../service/books.service.js";
+import { createService, destroyService, updateService, readService } from "../service/books.service.js";
 import { getBookDetails } from "../utils/googleBooks.js";
 import getBooksFromChatGPT, {
-  getRelatedBooksFromChatGPT,
+  getRelatedBooksFromChatGPT, getBookRecommendations
 } from "../utils/openAI.js";
 import axios from "axios";
-import limitBooksVersion from "../utils/limitBooks.js"
 import {readService as readShared, createService as createSharedBook } from "../service/shared.service.js"
 import { createService as createNotification } from "../service/notification.service.js";
 
@@ -12,13 +11,13 @@ async function getBooks(req, res, next) {
   try {
     const { description } = req.body;
     let bookTitles = await getBooksFromChatGPT(description);
+
     const bookDetailsPromises = bookTitles.map((title) =>
       getBookDetails(title)
     );
 
     const books = await Promise.all(bookDetailsPromises);
     let flattenedBooks = books.flat();
-    flattenedBooks = limitBooksVersion(flattenedBooks);
 
     if (flattenedBooks.length === 0) {
       return res.error404();
@@ -90,6 +89,32 @@ async function getOneBook(req, res, next) {
     }
   } catch (error) {
     return next(error);
+  }
+}
+
+async function getRecommendedBooks(req, res, next) {
+  try {
+    const {_id} = req.user
+    const userBooks =  await readService({user_id: _id})
+
+    if (userBooks.length === 0) {
+      return res.error404()
+    }
+    const recommendations = await getBookRecommendations(userBooks)
+
+    const bookDetailsPromises = recommendations.map((title) =>
+      getBookDetails(title)
+    );
+
+    const books = await Promise.all(bookDetailsPromises);
+    let flattenedBooks = books.flat();
+    if (flattenedBooks.length === 0) {
+      return res.error404();
+    }
+
+    return res.message200(flattenedBooks);
+  } catch (error) {
+    return next(error)
   }
 }
 
@@ -179,4 +204,4 @@ async function share(req, res, next) {
   }
 }
 
-export { getBooks, getOneBook, create, destroy, update, shared, share };
+export { getBooks, getOneBook, getRecommendedBooks, create, destroy, update, shared, share };
