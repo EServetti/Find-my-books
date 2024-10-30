@@ -35,15 +35,15 @@ if (cluster.isPrimary) {
   server.listen(port, startCb);
 
   // middlewares
-  // const corsOptions = {
-  //   origin: "http://localhost:5173",
-  //   credentials: true,
-  // };
-
   const corsOptions = {
-    origin: 'https://find-your-books.vercel.app',
-    credentials: true
+    origin: "http://localhost:5173",
+    credentials: true,
   };
+
+  // const corsOptions = {
+  //   origin: 'https://find-your-books.vercel.app',
+  //   credentials: true
+  // };
   server.use(cookieParser(process.env.SECRET_COOKIE));
   server.use(cors(corsOptions));
   server.use(express.json({ limit: "10mb" }));
