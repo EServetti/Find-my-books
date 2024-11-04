@@ -16,7 +16,7 @@ const numCPUs = os.cpus().length;
 if (cluster.isPrimary) {
   console.log("Primary process");
 
-  for (let i = 0; i < numCPUs; i++) {
+  for (let i = 0; i < 2; i++) {
     cluster.fork();
   }
 
